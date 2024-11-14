@@ -1,4 +1,4 @@
-package eco.energy.api.infra.security;
+package eco.energy.api.dto;
 
 public record DadosTokenJWT(String token) {
 }

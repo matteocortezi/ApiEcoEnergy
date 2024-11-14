@@ -1,6 +1,8 @@
 package eco.energy.api.controller;
+
+
+import eco.energy.api.dto.DadosTokenJWT;
 import eco.energy.api.dto.usuarioDto.DadosAutenticacao;
-import eco.energy.api.infra.security.DadosTokenJWT;
 import eco.energy.api.infra.security.TokenService;
 import eco.energy.api.model.Usuario;
 import jakarta.validation.Valid;
@@ -32,4 +34,5 @@ public class AutenticacaoController {
 
         return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
+
 }
