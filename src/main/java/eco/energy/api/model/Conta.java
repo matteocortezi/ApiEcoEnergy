@@ -38,7 +38,7 @@ public class Conta {
     private Mes mes;
 
     @ManyToOne
-    @JoinColumn(name = "Usuario_id_usuario", nullable = false)
+    @JoinColumn(name = "usuario_id_usuario", nullable = false)
     private Usuario usuario;
 
 

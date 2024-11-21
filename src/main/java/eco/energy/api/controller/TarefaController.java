@@ -5,6 +5,7 @@ import eco.energy.api.dto.tarefaDto.DadosCadastroTarefa;
 import eco.energy.api.dto.tarefaDto.DadosDetalhamentoTarefa;
 import eco.energy.api.dto.tarefaDto.DadosListagemTarefa;
 import eco.energy.api.model.Tarefa;
+import eco.energy.api.model.Usuario;
 import eco.energy.api.repository.TarefaRepository;
 import eco.energy.api.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,21 +43,14 @@ public class TarefaController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PostMapping
-    @Transactional
-    public ResponseEntity<DadosDetalhamentoTarefa> cadastrar(
-            @RequestBody @Valid @Parameter(description = "Dados de cadastro da nova tarefa", required = true) DadosCadastroTarefa dados,
-            UriComponentsBuilder uriBuilder) {
-
-        var usuario = usuarioRepository.findById(dados.idUsuario())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
-
-        var tarefa = new Tarefa(dados);
-        tarefa.setUsuario(usuario);
-
-        tarefaRepository.save(tarefa);
-
-        var uri = uriBuilder.path("/tarefa/{id}").buildAndExpand(tarefa.getIdTarefa()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoTarefa(tarefa));
+    public ResponseEntity<Tarefa> criarTarefa(@RequestBody Tarefa tarefa) {
+        if (tarefa.getUsuario().getId() != null) {
+            Usuario usuario = usuarioRepository.findById(tarefa.getUsuario().getId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+            tarefa.setUsuario(usuario);
+        }
+        Tarefa novaTarefa = tarefaRepository.save(tarefa);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaTarefa);
     }
 
     @Operation(summary = "Listar tarefas", description = "Retorna uma lista paginada de todas as tarefas registradas")

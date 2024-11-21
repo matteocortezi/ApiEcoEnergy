@@ -5,6 +5,7 @@ import eco.energy.api.dto.contaDto.DadosCadastroConta;
 import eco.energy.api.dto.contaDto.DadosDetalhamentoConta;
 import eco.energy.api.dto.contaDto.DadosListagemConta;
 import eco.energy.api.model.Conta;
+import eco.energy.api.model.Usuario;
 import eco.energy.api.repository.ContaRepository;
 import eco.energy.api.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,20 +43,14 @@ public class ContaController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PostMapping
-    @Transactional
-    public ResponseEntity<DadosDetalhamentoConta> cadastrar(
-            @RequestBody @Valid @Parameter(description = "Dados de cadastro da nova conta", required = true) DadosCadastroConta dados,
-            UriComponentsBuilder uriBuilder) {
-
-        var usuario = usuarioRepository.findById(dados.idUsuario())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
-
-        var conta = new Conta(dados);
-        conta.setUsuario(usuario);
-        contaRepository.save(conta);
-
-        var uri = uriBuilder.path("/conta/{id}").buildAndExpand(conta.getIdConta()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoConta(conta));
+    public ResponseEntity<Conta> criarConta(@RequestBody Conta conta) {
+        if (conta.getUsuario().getId() != null) {
+            Usuario usuario = usuarioRepository.findById(conta.getUsuario().getId())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+            conta.setUsuario(usuario);
+        }
+        Conta novaConta = contaRepository.save(conta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaConta);
     }
 
     @Operation(summary = "Listar contas", description = "Retorna uma lista paginada de todas as contas registradas")
