@@ -1,3 +1,4 @@
+![EcoEnergy logo fundo verde](https://github.com/user-attachments/assets/43e2da14-1a1b-42d5-87df-c5e0361f28c4)
 # Aplicação: Eco Energy
 
 ### Vídeo Pitch : https://www.youtube.com/watch?v=BCp8ciX16gg
